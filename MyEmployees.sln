@@ -1,0 +1,21 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyEmployees.WebApi", "Src\MyEmployees.WebApi\MyEmployees.WebApi.csproj", "{E0FFD249-1565-4BBA-9274-DAE77A05E2B1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{1BB4CA68-C51F-4F2E-AAFF-A92F8C8455FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E0FFD249-1565-4BBA-9274-DAE77A05E2B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0FFD249-1565-4BBA-9274-DAE77A05E2B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0FFD249-1565-4BBA-9274-DAE77A05E2B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0FFD249-1565-4BBA-9274-DAE77A05E2B1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E0FFD249-1565-4BBA-9274-DAE77A05E2B1} = {1BB4CA68-C51F-4F2E-AAFF-A92F8C8455FA}
+	EndGlobalSection
+EndGlobal
