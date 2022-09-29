@@ -64,4 +64,22 @@ public sealed class ManagerRepository : IManagerRepository
 
         return managerDto?.ToManager();
     }
+
+    public async Task<bool> DeleteAsync(Username username, CancellationToken cancellationToken = default)
+    {
+        var deleteItemRequest = new DeleteItemRequest
+        {
+            TableName = _databaseSettings.Value.UsersTableName,
+            Key = new Dictionary<string, AttributeValue>
+            {
+                { "pk", new AttributeValue(DatabaseSettings.ManagersPrefix + username.Value) },
+                { "sk", new AttributeValue(DatabaseSettings.ManagersPrefix + username.Value) }
+            },
+            ReturnValues = ReturnValue.ALL_OLD
+        };
+
+        var response = await _dynamoDB.DeleteItemAsync(deleteItemRequest, cancellationToken);
+        
+        return response.HttpStatusCode == HttpStatusCode.OK && response.Attributes.Count > 0;
+    }
 }

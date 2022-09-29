@@ -31,7 +31,12 @@ public sealed class ManagerService : IManagerService
     {
         return _managerRepository.GetByUsernameAsync(username, cancellationToken);
     }
-    
+
+    public Task<bool> DeleteAsync(Username username, CancellationToken cancellationToken = default)
+    {
+        return _managerRepository.DeleteAsync(username, cancellationToken);
+    }
+
     private static IEnumerable<ValidationFailure> GenerateValidationFailure(string message) => new[]
     {
         new ValidationFailure(nameof(Manager), message)

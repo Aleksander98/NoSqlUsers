@@ -42,4 +42,17 @@ public class ManagerController : ControllerBase
 
         return Ok(manager.ToManagerResponse());
     }
+    
+    [HttpDelete("{username}")]
+    public async Task<IActionResult> DeleteAsync([FromRoute] string username)
+    {
+        var deleted = await _managerService.DeleteAsync(Username.From(username), HttpContext.RequestAborted); 
+        
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
 }
