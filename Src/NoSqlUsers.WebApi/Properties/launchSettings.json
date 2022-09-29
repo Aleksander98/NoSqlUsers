@@ -9,7 +9,7 @@
     }
   },
   "profiles": {
-    "MyEmployees.WebApi": {
+    "NoSqlUsers.WebApi": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "launchBrowser": true,

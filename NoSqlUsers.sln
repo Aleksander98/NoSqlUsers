@@ -1,14 +1,14 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyEmployees.WebApi", "Src\MyEmployees.WebApi\MyEmployees.WebApi.csproj", "{E0FFD249-1565-4BBA-9274-DAE77A05E2B1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoSqlUsers.WebApi", "Src\NoSqlUsers.WebApi\NoSqlUsers.WebApi.csproj", "{E0FFD249-1565-4BBA-9274-DAE77A05E2B1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Src", "Src", "{1BB4CA68-C51F-4F2E-AAFF-A92F8C8455FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyEmployees.Domain", "Src\MyEmployees.Domain\MyEmployees.Domain.csproj", "{E60F77A3-AA8F-4128-AAE5-6A8FBB7555C3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoSqlUsers.Domain", "Src\NoSqlUsers.Domain\NoSqlUsers.Domain.csproj", "{E60F77A3-AA8F-4128-AAE5-6A8FBB7555C3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyEmployees.Application", "Src\MyEmployees.Application\MyEmployees.Application.csproj", "{796377C3-8247-404C-B445-A7AD84B91E59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoSqlUsers.Application", "Src\NoSqlUsers.Application\NoSqlUsers.Application.csproj", "{796377C3-8247-404C-B445-A7AD84B91E59}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyEmployees.Infrastructure", "Src\MyEmployees.Infrastructure\MyEmployees.Infrastructure.csproj", "{E2A6D670-D6E1-4CAB-BE52-028FB5FE2FB8}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NoSqlUsers.Infrastructure", "Src\NoSqlUsers.Infrastructure\NoSqlUsers.Infrastructure.csproj", "{E2A6D670-D6E1-4CAB-BE52-028FB5FE2FB8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

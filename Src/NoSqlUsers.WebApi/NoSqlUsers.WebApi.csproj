@@ -4,6 +4,7 @@
         <TargetFramework>net6.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <RootNamespace>MyEmployees.WebApi</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
@@ -11,8 +12,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MyEmployees.Application\MyEmployees.Application.csproj" />
-      <ProjectReference Include="..\MyEmployees.Infrastructure\MyEmployees.Infrastructure.csproj" />
+      <ProjectReference Include="..\NoSqlUsers.Application\NoSqlUsers.Application.csproj" />
+      <ProjectReference Include="..\NoSqlUsers.Infrastructure\NoSqlUsers.Infrastructure.csproj" />
     </ItemGroup>
 
 </Project>

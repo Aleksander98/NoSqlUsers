@@ -4,10 +4,11 @@
         <TargetFramework>net6.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <RootNamespace>MyEmployees.Infrastructure</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\MyEmployees.Application\MyEmployees.Application.csproj" />
+      <ProjectReference Include="..\NoSqlUsers.Application\NoSqlUsers.Application.csproj" />
     </ItemGroup>
 
     <ItemGroup>
