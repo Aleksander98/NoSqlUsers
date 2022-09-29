@@ -53,7 +53,7 @@ public sealed class EmployeeRepository : IEmployeeRepository
             }
         };
         var response = await _dynamoDB.GetItemAsync(getItemRequest, cancellationToken);
-        
+
         if (response.Item.Count == 0)
         {
             return null;
@@ -63,5 +63,23 @@ public sealed class EmployeeRepository : IEmployeeRepository
         var employeeDto = JsonSerializer.Deserialize<EmployeeDto>(itemAsDocument.ToJson());
 
         return employeeDto?.ToEmployee();
+    }
+
+    public async Task<bool> DeleteAsync(Username username, CancellationToken cancellationToken = default)
+    {
+        var deleteItemRequest = new DeleteItemRequest
+        {
+            TableName = _databaseSettings.Value.UsersTableName,
+            Key = new Dictionary<string, AttributeValue>
+            {
+                { "pk", new AttributeValue(DatabaseSettings.EmployeesPrefix + username.Value) },
+                { "sk", new AttributeValue(DatabaseSettings.EmployeesPrefix + username.Value) }
+            },
+            ReturnValues = ReturnValue.ALL_OLD
+        };
+
+        var response = await _dynamoDB.DeleteItemAsync(deleteItemRequest, cancellationToken);
+        
+        return response.HttpStatusCode == HttpStatusCode.OK && response.Attributes.Count > 0;
     }
 }

@@ -42,4 +42,17 @@ public class EmployeeController : ControllerBase
 
         return Ok(employee.ToEmployeeResponse());
     }
+
+    [HttpDelete("{username}")]
+    public async Task<IActionResult> DeleteAsync([FromRoute] string username)
+    {
+        var deleted = await _employeeService.DeleteAsync(Username.From(username), HttpContext.RequestAborted); 
+        
+        if (!deleted)
+        {
+            return NotFound();
+        }
+
+        return NoContent();
+    }
 }

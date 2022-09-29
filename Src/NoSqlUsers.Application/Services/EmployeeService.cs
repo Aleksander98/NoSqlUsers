@@ -32,6 +32,11 @@ public sealed class EmployeeService : IEmployeeService
         return _employeeRepository.GetByUsernameAsync(username, cancellationToken);
     }
 
+    public Task<bool> DeleteAsync(Username username, CancellationToken cancellationToken = default)
+    {
+        return _employeeRepository.DeleteAsync(username, cancellationToken);
+    }
+
     private static IEnumerable<ValidationFailure> GenerateValidationFailure(string message) => new[]
     {
         new ValidationFailure(nameof(Employee), message)
