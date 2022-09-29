@@ -1,3 +1,4 @@
+using Amazon;
 using Amazon.DynamoDBv2;
 using MyEmployees.Application.Repositories;
 using MyEmployees.Application.Services;
@@ -18,13 +19,15 @@ if (builder.Environment.IsDevelopment())
 }
 else
 {
-    builder.Services.AddSingleton<IAmazonDynamoDB>(_ => new AmazonDynamoDBClient());
+    builder.Services.AddSingleton<IAmazonDynamoDB>(_ => new AmazonDynamoDBClient(RegionEndpoint.EUWest1));
 }
 
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection(DatabaseSettings.KeyName));
 
 builder.Services.AddSingleton<IEmployeeRepository, EmployeeRepository>();
+builder.Services.AddSingleton<IManagerRepository, ManagerRepository>();
 builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
+builder.Services.AddSingleton<IManagerService, ManagerService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
