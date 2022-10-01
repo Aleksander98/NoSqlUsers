@@ -23,22 +23,9 @@ public sealed class EmployeeRepository : IEmployeeRepository
         _databaseSettings = dynamoDBSettings ?? throw new ArgumentNullException(nameof(dynamoDBSettings));
     }
 
-    public async Task<bool> CreateAsync(Employee employee, CancellationToken cancellationToken = default)
+    public Task<bool> CreateAsync(Employee employee, CancellationToken cancellationToken = default)
     {
-        var employeeDto = employee.ToEmployeeDto();
-        var employeeDtoAsJson = JsonSerializer.Serialize(employeeDto);
-        var itemAsAttributes = Document
-            .FromJson(employeeDtoAsJson)
-            .ToAttributeMap();
-
-        var putItemRequest = new PutItemRequest
-        {
-            TableName = _databaseSettings.Value.UsersTableName,
-            Item = itemAsAttributes
-        };
-        var response = await _dynamoDB.PutItemAsync(putItemRequest, cancellationToken);
-
-        return response.HttpStatusCode == HttpStatusCode.OK;
+        return UpdateAsync(employee, cancellationToken);
     }
 
     public async Task<Employee?> GetByUsernameAsync(Username username, CancellationToken cancellationToken = default)
@@ -65,6 +52,18 @@ public sealed class EmployeeRepository : IEmployeeRepository
         return employeeDto?.ToEmployee();
     }
 
+    public async Task<bool> UpdateAsync(Employee employee, CancellationToken cancellationToken = default)
+    {
+        var putItemRequest = new PutItemRequest
+        {
+            TableName = _databaseSettings.Value.UsersTableName,
+            Item = CreatePutItemAttributes(employee)
+        };
+        var response = await _dynamoDB.PutItemAsync(putItemRequest, cancellationToken);
+
+        return response.HttpStatusCode == HttpStatusCode.OK;
+    }
+
     public async Task<bool> DeleteAsync(Username username, CancellationToken cancellationToken = default)
     {
         var deleteItemRequest = new DeleteItemRequest
@@ -81,5 +80,16 @@ public sealed class EmployeeRepository : IEmployeeRepository
         var response = await _dynamoDB.DeleteItemAsync(deleteItemRequest, cancellationToken);
         
         return response.HttpStatusCode == HttpStatusCode.OK && response.Attributes.Count > 0;
+    }
+
+    private static Dictionary<string, AttributeValue> CreatePutItemAttributes(Employee employee)
+    {
+        var employeeDto = employee.ToEmployeeDto();
+        var employeeDtoAsJson = JsonSerializer.Serialize(employeeDto);
+        var itemAsAttributes = Document
+            .FromJson(employeeDtoAsJson)
+            .ToAttributeMap();
+
+        return itemAsAttributes;
     }
 }

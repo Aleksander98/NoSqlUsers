@@ -32,6 +32,11 @@ public sealed class EmployeeService : IEmployeeService
         return _employeeRepository.GetByUsernameAsync(username, cancellationToken);
     }
 
+    public Task<bool> UpdateAsync(Employee employee, CancellationToken cancellationToken = default)
+    {
+        return _employeeRepository.UpdateAsync(employee, cancellationToken);
+    }
+
     public Task<bool> DeleteAsync(Username username, CancellationToken cancellationToken = default)
     {
         return _employeeRepository.DeleteAsync(username, cancellationToken);

@@ -42,6 +42,23 @@ public class EmployeeController : ControllerBase
 
         return Ok(employee.ToEmployeeResponse());
     }
+    
+    [HttpPut("{username}")]
+    public async Task<IActionResult> UpdateAsync([FromRoute] string username, [FromBody] EmployeeRequest employeeRequest)
+    {
+        if (await _employeeService.GetByUsernameAsync(Username.From(username)) is null)
+        {
+            return NotFound();
+        }
+        
+        var employee = employeeRequest.ToEmployee();
+
+        await _employeeService.UpdateAsync(employee, HttpContext.RequestAborted);
+
+        var response = employee.ToEmployeeResponse();
+
+        return Ok(response);
+    }
 
     [HttpDelete("{username}")]
     public async Task<IActionResult> DeleteAsync([FromRoute] string username)

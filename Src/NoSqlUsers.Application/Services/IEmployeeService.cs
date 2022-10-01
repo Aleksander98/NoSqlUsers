@@ -9,5 +9,7 @@ public interface IEmployeeService
 
     Task<Employee?> GetByUsernameAsync(Username username, CancellationToken cancellationToken = default);
 
+    Task<bool> UpdateAsync(Employee employee, CancellationToken cancellationToken = default);
+
     Task<bool> DeleteAsync(Username username, CancellationToken cancellationToken = default);
 }
