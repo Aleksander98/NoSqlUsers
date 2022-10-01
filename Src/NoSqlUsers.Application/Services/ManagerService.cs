@@ -32,6 +32,11 @@ public sealed class ManagerService : IManagerService
         return _managerRepository.GetByUsernameAsync(username, cancellationToken);
     }
 
+    public Task<bool> UpdateAsync(Manager manager, CancellationToken cancellationToken = default)
+    {
+        return _managerRepository.UpdateAsync(manager, cancellationToken);
+    }
+
     public Task<bool> DeleteAsync(Username username, CancellationToken cancellationToken = default)
     {
         return _managerRepository.DeleteAsync(username, cancellationToken);

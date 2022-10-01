@@ -23,22 +23,9 @@ public sealed class ManagerRepository : IManagerRepository
         _databaseSettings = dynamoDBSettings ?? throw new ArgumentNullException(nameof(dynamoDBSettings));
     }
 
-    public async Task<bool> CreateAsync(Manager manager, CancellationToken cancellationToken = default)
+    public Task<bool> CreateAsync(Manager manager, CancellationToken cancellationToken = default)
     {
-        var managerDto = manager.ToManagerDto();
-        var managerDtoAsJson = JsonSerializer.Serialize(managerDto);
-        var itemAsAttributes = Document
-            .FromJson(managerDtoAsJson)
-            .ToAttributeMap();
-
-        var putItemRequest = new PutItemRequest
-        {
-            TableName = _databaseSettings.Value.UsersTableName,
-            Item = itemAsAttributes
-        };
-        var response = await _dynamoDB.PutItemAsync(putItemRequest, cancellationToken);
-
-        return response.HttpStatusCode == HttpStatusCode.OK;
+        return UpdateAsync(manager, cancellationToken);
     }
 
     public async Task<Manager?> GetByUsernameAsync(Username username, CancellationToken cancellationToken = default)
@@ -65,6 +52,18 @@ public sealed class ManagerRepository : IManagerRepository
         return managerDto?.ToManager();
     }
 
+    public async Task<bool> UpdateAsync(Manager manager, CancellationToken cancellationToken = default)
+    {
+        var putItemRequest = new PutItemRequest
+        {
+            TableName = _databaseSettings.Value.UsersTableName,
+            Item = CreatePutItemAttributes(manager)
+        };
+        var response = await _dynamoDB.PutItemAsync(putItemRequest, cancellationToken);
+
+        return response.HttpStatusCode == HttpStatusCode.OK;
+    }
+
     public async Task<bool> DeleteAsync(Username username, CancellationToken cancellationToken = default)
     {
         var deleteItemRequest = new DeleteItemRequest
@@ -81,5 +80,16 @@ public sealed class ManagerRepository : IManagerRepository
         var response = await _dynamoDB.DeleteItemAsync(deleteItemRequest, cancellationToken);
         
         return response.HttpStatusCode == HttpStatusCode.OK && response.Attributes.Count > 0;
+    }
+    
+    private static Dictionary<string, AttributeValue> CreatePutItemAttributes(Manager manager)
+    {
+        var managerDto = manager.ToManagerDto();
+        var managerDtoAsJson = JsonSerializer.Serialize(managerDto);
+        var itemAsAttributes = Document
+            .FromJson(managerDtoAsJson)
+            .ToAttributeMap();
+
+        return itemAsAttributes;
     }
 }

@@ -43,6 +43,23 @@ public class ManagerController : ControllerBase
         return Ok(manager.ToManagerResponse());
     }
     
+    [HttpPut("{username}")]
+    public async Task<IActionResult> UpdateAsync([FromRoute] string username, [FromBody] ManagerRequest managerRequest)
+    {
+        if (await _managerService.GetByUsernameAsync(Username.From(username)) is null)
+        {
+            return NotFound();
+        }
+
+        var manager = managerRequest.ToManager();
+
+        await _managerService.UpdateAsync(manager, HttpContext.RequestAborted);
+
+        var response = manager.ToManagerResponse();
+
+        return Ok(response);
+    }
+    
     [HttpDelete("{username}")]
     public async Task<IActionResult> DeleteAsync([FromRoute] string username)
     {

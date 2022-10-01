@@ -9,5 +9,7 @@ public interface IManagerRepository
 
     Task<Manager?> GetByUsernameAsync(Username username, CancellationToken cancellationToken = default);
 
+    Task<bool> UpdateAsync(Manager manager, CancellationToken cancellationToken = default);
+
     Task<bool> DeleteAsync(Username username, CancellationToken cancellationToken = default);
 }
