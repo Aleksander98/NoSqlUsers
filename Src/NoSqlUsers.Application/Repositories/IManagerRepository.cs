@@ -1,3 +1,4 @@
+using MyEmployees.Application.Models;
 using MyEmployees.Domain.Models;
 using MyEmployees.Domain.Models.Common;
 
@@ -9,6 +10,9 @@ public interface IManagerRepository
 
     Task<Manager?> GetByUsernameAsync(Username username, CancellationToken cancellationToken = default);
 
+    Task<PaginatedList<Manager>> GetAllWithPaginationAsync(int pageSize, string? pageToken,
+        CancellationToken cancellationToken = default);
+    
     Task<bool> UpdateAsync(Manager manager, CancellationToken cancellationToken = default);
 
     Task<bool> DeleteAsync(Username username, CancellationToken cancellationToken = default);

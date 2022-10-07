@@ -1,5 +1,6 @@
 namespace MyEmployees.WebApi.Contracts.Requests;
 
+[Serializable]
 public abstract class UserRequest
 {
     public string Username { get; set; } = default!;

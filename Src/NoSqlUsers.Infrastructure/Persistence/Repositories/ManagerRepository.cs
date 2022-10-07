@@ -4,11 +4,13 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using Amazon.DynamoDBv2.Model;
 using Microsoft.Extensions.Options;
+using MyEmployees.Application.Models;
 using MyEmployees.Application.Repositories;
 using MyEmployees.Domain.Models;
 using MyEmployees.Domain.Models.Common;
 using MyEmployees.Infrastructure.Persistence.Dtos;
 using MyEmployees.Infrastructure.Persistence.Mapping;
+using MyEmployees.Infrastructure.Persistence.Pagination;
 
 namespace MyEmployees.Infrastructure.Persistence.Repositories;
 
@@ -27,7 +29,7 @@ public sealed class ManagerRepository : IManagerRepository
     {
         return UpdateAsync(manager, cancellationToken);
     }
-
+    
     public async Task<Manager?> GetByUsernameAsync(Username username, CancellationToken cancellationToken = default)
     {
         var getItemRequest = new GetItemRequest
@@ -40,16 +42,34 @@ public sealed class ManagerRepository : IManagerRepository
             }
         };
         var response = await _dynamoDB.GetItemAsync(getItemRequest, cancellationToken);
-        
-        if (response.Item.Count == 0)
+
+        return response.Item.Count == 0 ? null : CreateManagerFromAttributeMap(response.Item);
+    }
+
+    public async Task<PaginatedList<Manager>> GetAllWithPaginationAsync(int pageSize, string? pageToken,
+        CancellationToken cancellationToken = default)
+    {
+        var scanRequest = new ScanRequest
         {
-            return null;
-        }
+            TableName = _databaseSettings.Value.UsersTableName,
+            FilterExpression = "begins_with(pk, :prefix)",
+            ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+            {
+                { ":prefix", new AttributeValue(DatabaseSettings.ManagersPrefix) }
+            },
+            ExclusiveStartKey = PageTokenEncryptor.Decrypt(pageToken, _databaseSettings.Value.PageTokenSecretKey),
+            Limit = pageSize
+        };
 
-        var itemAsDocument = Document.FromAttributeMap(response.Item);
-        var managerDto = JsonSerializer.Deserialize<ManagerDto>(itemAsDocument.ToJson());
+        var response = await _dynamoDB.ScanAsync(scanRequest, cancellationToken);
 
-        return managerDto?.ToManager();
+        var nextPageToken = PageTokenEncryptor
+            .Encrypt(response.LastEvaluatedKey, _databaseSettings.Value.PageTokenSecretKey);
+        var items = response.Items
+            .Select(CreateManagerFromAttributeMap)
+            .ToList();
+
+        return new PaginatedList<Manager>(items, pageSize, pageToken, nextPageToken);
     }
 
     public async Task<bool> UpdateAsync(Manager manager, CancellationToken cancellationToken = default)
@@ -57,7 +77,7 @@ public sealed class ManagerRepository : IManagerRepository
         var putItemRequest = new PutItemRequest
         {
             TableName = _databaseSettings.Value.UsersTableName,
-            Item = CreatePutItemAttributes(manager)
+            Item = CreateAttributeMapFromManager(manager)
         };
         var response = await _dynamoDB.PutItemAsync(putItemRequest, cancellationToken);
 
@@ -78,11 +98,22 @@ public sealed class ManagerRepository : IManagerRepository
         };
 
         var response = await _dynamoDB.DeleteItemAsync(deleteItemRequest, cancellationToken);
-        
+
         return response.HttpStatusCode == HttpStatusCode.OK && response.Attributes.Count > 0;
     }
     
-    private static Dictionary<string, AttributeValue> CreatePutItemAttributes(Manager manager)
+    private static Manager CreateManagerFromAttributeMap(Dictionary<string, AttributeValue> attributeMap)
+    {
+        var managerDtoAsJson = Document
+            .FromAttributeMap(attributeMap)
+            .ToJson();
+        
+        var managerDto = JsonSerializer.Deserialize<ManagerDto>(managerDtoAsJson);
+
+        return managerDto!.ToManager();
+    }
+
+    private static Dictionary<string, AttributeValue> CreateAttributeMapFromManager(Manager manager)
     {
         var managerDto = manager.ToManagerDto();
         var managerDtoAsJson = JsonSerializer.Serialize(managerDto);

@@ -1,5 +1,6 @@
 using FluentValidation;
 using FluentValidation.Results;
+using MyEmployees.Application.Models;
 using MyEmployees.Application.Repositories;
 using MyEmployees.Domain.Models;
 using MyEmployees.Domain.Models.Common;
@@ -30,6 +31,11 @@ public sealed class ManagerService : IManagerService
     public Task<Manager?> GetByUsernameAsync(Username username, CancellationToken cancellationToken = default)
     {
         return _managerRepository.GetByUsernameAsync(username, cancellationToken);
+    }
+
+    public Task<PaginatedList<Manager>> GetAllWithPaginationAsync(int pageSize, string? pageToken, CancellationToken cancellationToken = default)
+    {
+        return _managerRepository.GetAllWithPaginationAsync(pageSize, pageToken, cancellationToken);
     }
 
     public Task<bool> UpdateAsync(Manager manager, CancellationToken cancellationToken = default)

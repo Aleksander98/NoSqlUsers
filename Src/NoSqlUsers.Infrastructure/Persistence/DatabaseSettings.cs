@@ -9,4 +9,6 @@ public sealed record DatabaseSettings
     public const string ManagersPrefix = "MNGR#";
 
     public string UsersTableName { get; init; } = "Users";
+
+    public string PageTokenSecretKey { get; init; } = "SecretKey";
 }

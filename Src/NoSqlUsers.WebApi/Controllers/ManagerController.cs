@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using MyEmployees.Application.Services;
 using MyEmployees.Domain.Models.Common;
 using MyEmployees.WebApi.Contracts.Requests;
+using MyEmployees.WebApi.Contracts.Responses;
 using MyEmployees.WebApi.Mapping;
 
 namespace MyEmployees.WebApi.Controllers;
@@ -41,6 +42,21 @@ public class ManagerController : ControllerBase
         }
 
         return Ok(manager.ToManagerResponse());
+    }
+    
+    [HttpGet]
+    public async Task<IActionResult> GetAllWithPaginationAsync([FromQuery] int pageSize, [FromQuery] string? pageToken)
+    {
+        var paginatedManagers = await _managerService
+            .GetAllWithPaginationAsync(pageSize, pageToken, HttpContext.RequestAborted);
+        
+        var managerResponses = paginatedManagers.Items
+            .Select(manager => manager.ToManagerResponse())
+            .ToList();
+        var paginationResponse = new PaginationResponse(pageSize, paginatedManagers.Pagination.PageToken, paginatedManagers.Pagination.NextPageToken);
+        var paginatedListResponse = new PaginatedListResponse<ManagerResponse>(managerResponses, paginationResponse);
+        
+        return Ok(paginatedListResponse);
     }
     
     [HttpPut("{username}")]
