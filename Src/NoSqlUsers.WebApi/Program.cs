@@ -1,9 +1,11 @@
 using Amazon;
 using Amazon.DynamoDBv2;
+using FluentValidation;
 using MyEmployees.Application.Repositories;
 using MyEmployees.Application.Services;
 using MyEmployees.Infrastructure.Persistence;
 using MyEmployees.Infrastructure.Persistence.Repositories;
+using MyEmployees.WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +32,8 @@ builder.Services.AddSingleton<IEmployeeService, EmployeeService>();
 builder.Services.AddSingleton<IManagerService, ManagerService>();
 
 builder.Services.AddControllers();
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -44,7 +48,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
 app.UseAuthorization();
+
+app.UseMiddleware<ValidationExceptionMiddleware>();
+
 app.MapControllers();
 
 app.Run();

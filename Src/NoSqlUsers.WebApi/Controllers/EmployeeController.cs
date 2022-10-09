@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using MyEmployees.Application.Services;
 using MyEmployees.Domain.Models.Common;
@@ -11,15 +12,21 @@ namespace MyEmployees.WebApi.Controllers;
 public class EmployeeController : ControllerBase
 {
     private readonly IEmployeeService _employeeService;
+    private readonly IValidator<EmployeeRequest> _employeeRequestValidator;
 
-    public EmployeeController(IEmployeeService employeeService)
+    public EmployeeController(IEmployeeService employeeService, IValidator<EmployeeRequest> employeeRequestValidator)
     {
-        _employeeService = employeeService ?? throw new ArgumentNullException(nameof(employeeService));
+        _employeeService = employeeService ?? 
+            throw new ArgumentNullException(nameof(employeeService));
+        _employeeRequestValidator = employeeRequestValidator ??
+            throw new ArgumentNullException(nameof(employeeRequestValidator));
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] EmployeeRequest employeeRequest)
     {
+        await _employeeRequestValidator.ValidateAndThrowAsync(employeeRequest, HttpContext.RequestAborted);
+        
         var employee = employeeRequest.ToEmployee();
 
         await _employeeService.CreateAsync(employee, HttpContext.RequestAborted);
@@ -46,6 +53,8 @@ public class EmployeeController : ControllerBase
     [HttpPut("{username}")]
     public async Task<IActionResult> UpdateAsync([FromRoute] string username, [FromBody] EmployeeRequest employeeRequest)
     {
+        await _employeeRequestValidator.ValidateAndThrowAsync(employeeRequest, HttpContext.RequestAborted);
+        
         if (await _employeeService.GetByUsernameAsync(Username.From(username)) is null)
         {
             return NotFound();

@@ -1,3 +1,4 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 using MyEmployees.Application.Services;
 using MyEmployees.Domain.Models.Common;
@@ -12,15 +13,21 @@ namespace MyEmployees.WebApi.Controllers;
 public class ManagerController : ControllerBase
 {
     private readonly IManagerService _managerService;
+    private readonly IValidator<ManagerRequest> _managerRequestValidator;
 
-    public ManagerController(IManagerService employeeService)
+    public ManagerController(IManagerService employeeService, IValidator<ManagerRequest> managerRequestValidator)
     {
-        _managerService = employeeService ?? throw new ArgumentNullException(nameof(employeeService));
+        _managerService = employeeService ?? 
+            throw new ArgumentNullException(nameof(employeeService));
+        _managerRequestValidator = managerRequestValidator ?? 
+            throw new ArgumentNullException(nameof(managerRequestValidator));
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateAsync([FromBody] ManagerRequest managerRequest)
     {
+        await _managerRequestValidator.ValidateAndThrowAsync(managerRequest, HttpContext.RequestAborted);
+        
         var manager = managerRequest.ToManager();
 
         await _managerService.CreateAsync(manager, HttpContext.RequestAborted);
@@ -62,6 +69,8 @@ public class ManagerController : ControllerBase
     [HttpPut("{username}")]
     public async Task<IActionResult> UpdateAsync([FromRoute] string username, [FromBody] ManagerRequest managerRequest)
     {
+        await _managerRequestValidator.ValidateAndThrowAsync(managerRequest, HttpContext.RequestAborted);
+        
         if (await _managerService.GetByUsernameAsync(Username.From(username)) is null)
         {
             return NotFound();
